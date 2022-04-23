@@ -26,7 +26,7 @@ const loadUserData = () => async (dispatch, getState) => {
       },
     });
     if (userData.stores?.length) {
-      const storesData = await getStoresDetail(userData.stores.slice(0, 30));
+      const storesData = await getStoresDetail(userData.stores.slice(0, 20));
       dispatch({
         type: USER_STORE.LOAD_USER_STORE_DATA,
         payload: {
