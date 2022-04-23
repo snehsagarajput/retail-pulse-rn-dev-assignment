@@ -8,6 +8,8 @@ export const COLORS = {
   BORDER: '#E6E6E6',
   BUTTON_TWO: '#2B65FF',
   HOME_SCREEN_BG: '#F1F3F6',
+  WARN: '#F41F1E',
+  OPTIONS: '#58B4E3',
 };
 
 export const MARGINS = {

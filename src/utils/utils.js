@@ -8,7 +8,7 @@ const getWishMsg = () => {
   let msg = 'Good ';
   try {
     const curHr = new Date().getHours();
-    if (curHr < 4 || curr > 22) {
+    if (curHr < 4 || curHr > 22) {
       msg += 'Night';
     } else if (curHr < 12) {
       msg += 'Morning';

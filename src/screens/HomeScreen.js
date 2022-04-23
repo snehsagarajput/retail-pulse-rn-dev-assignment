@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   FlatList,
   StyleSheet,
+  TextInput,
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import auth from '@react-native-firebase/auth';
@@ -25,24 +26,53 @@ import {
   PlaceholderMedia,
   Fade,
 } from 'rn-placeholder';
+import {Icon} from 'react-native-eva-icons';
+import Animated, {Layout, SlideInRight} from 'react-native-reanimated';
+import {debounce} from 'lodash';
+import SearchBar from '../components/SearchBar';
 
 export default HomeScreen = ({navigation}) => {
   const [loading, setLoading] = useState({state: false, text: ''});
+  const [searchActive, setSearchActive] = useState(false);
+  const [filterActive, setFilterActive] = useState(false);
+  const [searchText, setSearchText] = useState('');
+  const [stores, setStores] = useState([]);
   const wishMsg = useConstRef(getWishMsg());
   const emptyArray = useConstRef(() => Array.apply(null, Array(12)));
   const dispatch = useDispatch();
   const userStoreState = useSelector((state) => state.userStore);
+  const logoutRef = useRef();
 
   useEffect(() => {
     dispatch(loadUserData());
   }, []);
 
+  const delayedQuery = debounce((text) => {
+    setStores(
+      userStoreState.stores.filter((store) => {
+        const query = text.toLowerCase();
+        return (
+          (store?.data?.name?.toLowerCase?.() || '').includes(query) ||
+          (store?.data?.area?.toLowerCase?.() || '').includes(query) ||
+          (store?.data?.route?.toLowerCase?.() || '').includes(query) ||
+          (store?.data?.type?.toLowerCase?.() || '').includes(query)
+        );
+      }),
+    );
+  }, 400);
+
+  const handleSearchText = (text) => {
+    setSearchText(text);
+    delayedQuery(text);
+  };
+
   const handleLogOutPress = () => {
+    logoutRef?.current?.startAnimation?.();
     const logOut = () => {
       setLoading({state: true, text: 'Logging out...'});
       auth()
         .signOut()
-        .then((a) => {
+        .then(() => {
           dispatch(removeUserAuth());
           navigation.reset({
             index: 0,
@@ -69,6 +99,35 @@ export default HomeScreen = ({navigation}) => {
       ],
       {cancelable: true},
     );
+  };
+
+  const handleSearchPress = () => {
+    if (filterActive) {
+      handleFilterClose();
+    }
+    if (!searchActive) {
+      setSearchActive(true);
+      setSearchText('');
+      setStores([]);
+    }
+  };
+
+  const handleSearchClose = () => {
+    setSearchActive(false);
+    setSearchText('');
+    setStores([]);
+  };
+
+  const handleFilterPress = () => {
+    if (searchActive) {
+      handleSearchClose();
+    }
+    setFilterActive(true);
+  };
+
+  const handleFilterClose = () => {
+    setFilterActive(false);
+    setStores([]);
   };
 
   const renderStoreInfo = ({item, index}) => {
@@ -141,23 +200,52 @@ export default HomeScreen = ({navigation}) => {
             <Text style={styles.username}>{userStoreState.name}</Text>
           )}
         </View>
-        <TouchableOpacity
-          style={{
-            backgroundColor: COLORS.PRIMARY_BUTTON,
-            height: 30,
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: 10,
-            width: 90,
-          }}
-          onPress={handleLogOutPress}>
-          <Text style={{fontSize: 14, color: COLORS.WHITE}}>{'Logout'}</Text>
-        </TouchableOpacity>
+        <View style={styles.options}>
+          <TouchableOpacity onPress={handleSearchPress}>
+            <Icon
+              name={'search-outline'}
+              width={26}
+              height={26}
+              fill={COLORS.OPTIONS}
+              animation={'pulse'}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleFilterPress}>
+            <Icon
+              name={'funnel-outline'}
+              width={26}
+              height={26}
+              fill={COLORS.OPTIONS}
+              animation={'pulse'}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleLogOutPress}>
+            <Icon
+              ref={logoutRef}
+              name={'power-outline'}
+              width={24}
+              height={24}
+              fill={COLORS.WARN}
+              animation={'pulse'}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
+      {searchActive ? (
+        <SearchBar
+          searchText={searchText}
+          handleSearchText={handleSearchText}
+          handleSearchClose={handleSearchClose}
+        />
+      ) : null}
       <FlatList
         style={{flex: 1}}
         data={
-          userStoreState.isLoading ? emptyArray : [] || userStoreState.stores
+          userStoreState.isLoading
+            ? emptyArray
+            : searchActive && searchText?.length
+            ? stores
+            : userStoreState.stores
         }
         keyExtractor={(item, index) =>
           `${item?.id || index.toString()}_element`
@@ -241,5 +329,11 @@ const styles = StyleSheet.create({
     fontWeight: '200',
     textTransform: 'capitalize',
     textAlign: 'right',
+  },
+  options: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    minWidth: 90,
   },
 });
