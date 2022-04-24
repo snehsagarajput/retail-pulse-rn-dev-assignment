@@ -147,6 +147,7 @@ const styles = StyleSheet.create({
   loginText: {
     fontSize: 24,
     color: COLORS.WHITE,
+    fontWeight: 'bold',
   },
   eyeBtn: {
     marginLeft: 10,

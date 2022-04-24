@@ -1,4 +1,5 @@
 import {USER_STORE} from '../actionType';
+import {getDefaultFilter} from '../../utils/utils';
 
 const initialState = {
   isLoading: false,
@@ -6,6 +7,9 @@ const initialState = {
   stores: [],
   isError: false,
   pendingImages: {},
+  filterOptions: {},
+  currentFilter: getDefaultFilter(),
+  filteredStore: [],
 };
 
 export default userStoreReducer = (state = initialState, action) => {
@@ -27,6 +31,24 @@ export default userStoreReducer = (state = initialState, action) => {
       return {
         ...state,
         isError: action.payload.isError ? true : false,
+      };
+    }
+    case USER_STORE.UPDATE_CURRENT_FILTER: {
+      return {
+        ...state,
+        currentFilter: action.payload.currentFilter,
+      };
+    }
+    case USER_STORE.SET_FILTERED_STORE: {
+      return {
+        ...state,
+        filteredStore: action.payload.filteredStore,
+      };
+    }
+    case USER_STORE.SET_FILTER_OPTIONS: {
+      return {
+        ...state,
+        filterOptions: action.payload.filterOptions,
       };
     }
     case USER_STORE.UPDATE_PENDING_IMAGES: {

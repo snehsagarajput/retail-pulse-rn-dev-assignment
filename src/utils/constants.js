@@ -12,6 +12,8 @@ const CONTANTS = {
     PASSWORD: 5,
   },
   DELAY_LOADING_TIME: 5000,
+  FILTER_KEYS: ['type', 'area', 'route'],
+  ALL_KEY: 'All',
 };
 
 module.exports = CONTANTS;

@@ -1,19 +1,23 @@
 import React, {useEffect, useState} from 'react';
 import {View, StyleSheet} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
-import {loadUserData} from '../redux/actions/userStoreActions';
+import {
+  loadUserData,
+  updateCurrentFilter,
+} from '../redux/actions/userStoreActions';
 import {MARGINS} from '../styles/designValues';
 import SafeView from '../components/SafeView';
 import SearchBar from '../components/SearchBar';
 import HeaderOptions from '../components/HeaderOptions';
 import HeaderGreetings from '../components/HeaderGreetings';
 import StoresList from '../components/StoresList';
+import Filter from '../components/Filter';
 import SelectedStore from '../components/SelectedStore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {ASYNC_STORAGE_KEYS} from '../utils/constants';
 import {USER_STORE} from '../redux/actionType';
 import {captureError, uploadPendingImages} from '../utils/utils';
-import {isEmpty, debounce} from 'lodash';
+import {isEmpty, isEqual, debounce} from 'lodash';
 import Loader from '../components/Loader';
 
 export default HomeScreen = ({navigation, route}) => {
@@ -22,7 +26,12 @@ export default HomeScreen = ({navigation, route}) => {
   const [filterActive, setFilterActive] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [stores, setStores] = useState([]);
-  const userStores = useSelector((state) => state.userStore?.stores || []);
+  const userStores = useSelector(
+    (state) => state.userStore?.filteredStore || [],
+  );
+  const currentFilter = useSelector(
+    (state) => state.userStore?.currentFilter || {},
+  );
   const isFetching = useSelector((state) => state.userStore?.isLoading);
   const uid = useSelector((state) => state.auth.uid);
   const [selectedStore, setSelectedStore] = useState(null);
@@ -96,6 +105,9 @@ export default HomeScreen = ({navigation, route}) => {
   };
 
   const handleSearchPress = () => {
+    if (isFetching) {
+      return;
+    }
     if (filterActive) {
       handleFilterClose();
     }
@@ -113,6 +125,9 @@ export default HomeScreen = ({navigation, route}) => {
   };
 
   const handleFilterPress = () => {
+    if (isFetching) {
+      return;
+    }
     if (searchActive) {
       handleSearchClose();
     }
@@ -122,6 +137,13 @@ export default HomeScreen = ({navigation, route}) => {
   const handleFilterClose = () => {
     setFilterActive(false);
     setStores([]);
+  };
+
+  const applyFilter = (filter) => {
+    handleFilterClose();
+    if (!isEqual(currentFilter, filter)) {
+      dispatch(updateCurrentFilter(filter));
+    }
   };
 
   return (
@@ -155,6 +177,9 @@ export default HomeScreen = ({navigation, route}) => {
           selectedStore={selectedStore}
           onClose={handleStorePressClose}
         />
+      ) : null}
+      {filterActive && !isFetching ? (
+        <Filter onClose={handleFilterClose} applyFilter={applyFilter} />
       ) : null}
     </>
   );

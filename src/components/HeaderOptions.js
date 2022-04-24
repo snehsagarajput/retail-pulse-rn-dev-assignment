@@ -3,10 +3,13 @@ import {View, TouchableOpacity, StyleSheet, Alert} from 'react-native';
 import {COLORS} from '../styles/designValues';
 import {Icon} from 'react-native-eva-icons';
 import auth from '@react-native-firebase/auth';
-import {useDispatch} from 'react-redux';
 import {removeUserAuth} from '../redux/actions/authActions';
 import {SCREENS} from '../utils/constants';
-import {captureError} from '../utils/utils';
+import {captureError, getDefaultFilter} from '../utils/utils';
+import {isEqual} from 'lodash';
+import {useSelector, useDispatch} from 'react-redux';
+
+const defaultFilter = getDefaultFilter();
 
 const HeaderOptions = ({
   handleSearchPress,
@@ -15,6 +18,7 @@ const HeaderOptions = ({
   navigation,
 }) => {
   const [searchRef, filterRef, logoutRef] = [useRef(), useRef(), useRef()];
+  const currentFilter = useSelector((state) => state.userStore?.currentFilter);
   const dispatch = useDispatch();
 
   const searchAction = () => {
@@ -71,7 +75,9 @@ const HeaderOptions = ({
       <TouchableOpacity onPress={filterAction}>
         <Icon
           ref={filterRef}
-          name={'funnel-outline'}
+          name={
+            !isEqual(currentFilter, defaultFilter) ? 'funnel' : 'funnel-outline'
+          }
           width={26}
           height={26}
           fill={COLORS.OPTIONS}

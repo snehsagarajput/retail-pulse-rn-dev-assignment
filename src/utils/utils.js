@@ -5,6 +5,7 @@ import {addToStoreVisitNode} from '../redux/helper/firestoreHelper';
 import {updatePendingImages} from '../redux/actions/userStoreActions';
 import {isEmpty, forOwn} from 'lodash';
 import * as RNFS from 'react-native-fs';
+import {FILTER_KEYS, ALL_KEY} from './constants';
 
 const isIOS = Platform.OS === 'ios';
 
@@ -91,4 +92,19 @@ const uploadPendingImages = (pendingImages, uid, dispatch) => {
   }
 };
 
-export {isIOS, captureError, getWishMsg, startUploading, uploadPendingImages};
+const getDefaultFilter = () => {
+  const obj = {};
+  FILTER_KEYS.forEach((key) => {
+    obj[key] = [ALL_KEY];
+  });
+  return obj;
+};
+
+export {
+  isIOS,
+  captureError,
+  getWishMsg,
+  startUploading,
+  uploadPendingImages,
+  getDefaultFilter,
+};
