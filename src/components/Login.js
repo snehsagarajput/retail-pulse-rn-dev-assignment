@@ -1,15 +1,25 @@
 import React, {useState} from 'react';
-import {TextInput, Text, ScrollView, StyleSheet, Alert} from 'react-native';
+import {
+  TextInput,
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  Alert,
+} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import {COLORS, MARGINS} from '../styles/designValues';
 import {MIN_LENGTH} from '../utils/constants';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import Loader from './Loader';
 import {captureError} from '../utils/utils';
+import {Icon} from 'react-native-eva-icons';
+import {useBoolean} from '../hooks/useBoolean';
 
 export default Login = () => {
   const [username, setUsername] = useState('ram@gmail.com');
   const [password, setPassword] = useState('retailpulse');
+  const [viewPassword, setViewPassword] = useBoolean(false);
   const [loading, setLoading] = useState({state: false, text: ''});
 
   const isDisabled =
@@ -62,16 +72,27 @@ export default Login = () => {
           maxLength={254}
           returnKeyType={'next'}
         />
-        <TextInput
-          disableFullscreenUI
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-          style={styles.input}
-          textContentType={'password'}
-          placeholder={'Password'}
-          returnKeyType={'done'}
-        />
+        <View style={[styles.input, {flexDirection: 'row'}]}>
+          <TextInput
+            disableFullscreenUI
+            secureTextEntry={!viewPassword}
+            value={password}
+            style={{flex: 1}}
+            onChangeText={setPassword}
+            textContentType={'password'}
+            placeholder={'Password'}
+            returnKeyType={'done'}
+          />
+          <TouchableOpacity style={styles.eyeBtn} onPress={setViewPassword}>
+            <Icon
+              name={!viewPassword ? 'eye-off-outline' : 'eye-outline'}
+              width={25}
+              height={25}
+              fill={COLORS.BLACK}
+              animation={'pulse'}
+            />
+          </TouchableOpacity>
+        </View>
         <TouchableOpacity
           disabled={isDisabled}
           style={[
@@ -126,5 +147,8 @@ const styles = StyleSheet.create({
   loginText: {
     fontSize: 24,
     color: COLORS.WHITE,
+  },
+  eyeBtn: {
+    marginLeft: 10,
   },
 });
