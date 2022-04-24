@@ -68,4 +68,11 @@ const fetchTenDocs = (docArray, collection) => {
     });
 };
 
-export {getStoresDetail, getUserData};
+const addToStoreVisitNode = (storeId, uid, updateObj) => {
+  firestore()
+    .collection('store-visit')
+    .doc(storeId)
+    .set({[uid]: firestore.FieldValue.arrayUnion(updateObj)}, {merge: true});
+};
+
+export {getStoresDetail, getUserData, addToStoreVisitNode};

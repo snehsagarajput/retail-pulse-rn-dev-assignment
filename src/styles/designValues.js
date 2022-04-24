@@ -10,6 +10,7 @@ export const COLORS = {
   HOME_SCREEN_BG: '#F1F3F6',
   WARN: '#F41F1E',
   OPTIONS: '#58B4E3',
+  UPLOAD_BTN: '#36AC45',
 };
 
 export const MARGINS = {

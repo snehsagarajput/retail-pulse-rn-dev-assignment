@@ -6,9 +6,8 @@ import {
   StyleSheet,
   useWindowDimensions,
   Platform,
+  TouchableOpacity,
 } from 'react-native';
-import {useSelector, useDispatch} from 'react-redux';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {ASYNC_STORAGE_KEYS} from '../utils/constants';
 import {COLORS, MARGINS} from '../styles/designValues';
 import {SCREENS} from '../utils/constants';
@@ -22,14 +21,15 @@ import {
   Fade,
 } from 'rn-placeholder';
 
-export default StoresList = ({isLoading, stores}) => {
+export default StoresList = ({isLoading, stores, onItemPress}) => {
   const emptyArray = useConstRef(() => Array.apply(null, Array(12)));
-  const {height, width} = useWindowDimensions();
 
   const renderStoreInfo = ({item, index}) => {
     const storeData = item.data;
     return (
-      <View style={styles.listItemContainer}>
+      <TouchableOpacity
+        style={styles.listItemContainer}
+        onPress={() => onItemPress(item)}>
         <FastImage
           style={styles.logoImage}
           source={{
@@ -51,7 +51,7 @@ export default StoresList = ({isLoading, stores}) => {
             {storeData?.route}
           </Text>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 

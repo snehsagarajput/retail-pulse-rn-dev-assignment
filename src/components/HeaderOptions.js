@@ -37,7 +37,7 @@ const HeaderOptions = ({
           dispatch(removeUserAuth());
           navigation.reset({
             index: 0,
-            routes: [{name: SCREENS.LOGIN}],
+            routes: [{name: SCREENS.LOGIN, params: {justLoggedOut: true}}],
           });
         })
         .catch(captureError)

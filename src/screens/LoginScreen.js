@@ -4,17 +4,14 @@ import auth from '@react-native-firebase/auth';
 import SplashView from '../components/SplashView';
 import {loadUserAuth} from '../redux/actions/authActions';
 import Login from '../components/Login';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {ASYNC_STORAGE_KEYS} from '../utils/constants';
 import SafeView from '../components/SafeView';
 import {SCREENS, MIN_LENGTH} from '../utils/constants';
 import {KeyboardAvoidingView} from 'react-native';
 
-export default LoginScreen = ({navigation}) => {
+export default LoginScreen = ({navigation, route}) => {
   const [showSplashScreen, setShowSplashScreen] = useState(true);
-  const uid = useSelector((state) => state.auth.uid);
   const dispatch = useDispatch();
-  let authSubscription;
+  let authSubscription, justLoggedIn;
 
   const unsubscribeAuthListener = () => {
     if (typeof authSubscription === 'function') {
@@ -28,9 +25,20 @@ export default LoginScreen = ({navigation}) => {
       unsubscribeAuthListener();
       navigation.reset({
         index: 0,
-        routes: [{name: SCREENS.HOME}],
+        routes: [
+          {
+            name: SCREENS.HOME,
+            params: {
+              justLoggedIn:
+                !showSplashScreen ||
+                justLoggedIn ||
+                route?.params?.justLoggedOut === true,
+            },
+          },
+        ],
       });
     } else {
+      justLoggedIn = true;
       setShowSplashScreen(false);
     }
   };

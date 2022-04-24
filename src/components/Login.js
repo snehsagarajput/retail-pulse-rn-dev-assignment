@@ -28,7 +28,7 @@ export default Login = () => {
     setLoading({state: true, text: 'Logging in...'});
     auth()
       .signInWithEmailAndPassword(username, password)
-      .then((user) => {})
+      .then(() => {})
       .catch((error) => {
         let errorMsg = 'Something went wrong. Please try again.';
         if (error.code === 'auth/invalid-email') {

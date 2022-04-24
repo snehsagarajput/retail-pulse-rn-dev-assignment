@@ -5,6 +5,7 @@ const initialState = {
   name: '',
   stores: [],
   isError: false,
+  pendingImages: {},
 };
 
 export default userStoreReducer = (state = initialState, action) => {
@@ -26,6 +27,12 @@ export default userStoreReducer = (state = initialState, action) => {
       return {
         ...state,
         isError: action.payload.isError ? true : false,
+      };
+    }
+    case USER_STORE.UPDATE_PENDING_IMAGES: {
+      return {
+        ...state,
+        pendingImages: action.payload.pendingImages,
       };
     }
     case USER_STORE.RESET_STATE: {

@@ -7,6 +7,10 @@ import {Provider as ReduxProvider, useDispatch} from 'react-redux';
 import {RESET_STATE} from './src/redux/actionType';
 import {NavigationContainer} from '@react-navigation/native';
 import StackNavigator from './src/screens/navigator';
+import {ASYNC_STORAGE_KEYS} from './src/utils/constants';
+import {isEmpty} from 'lodash';
+import {ToastProvider} from 'react-native-toast-notifications';
+import firestore from '@react-native-firebase/firestore';
 
 const store = configureStore(1);
 
@@ -15,7 +19,12 @@ const App = () => {
     'ViewPropTypes will be removed',
     'ColorPropType will be removed',
   ]);
+
   useEffect(() => {
+    firestore().settings({
+      //add all firestore settings here
+      ignoreUndefinedProperties: true,
+    });
     return () => {
       store.dispatch({type: RESET_STATE});
     };
@@ -25,7 +34,9 @@ const App = () => {
     <ReduxProvider store={store}>
       <SafeAreaProvider>
         <NavigationContainer>
-          <StackNavigator />
+          <ToastProvider>
+            <StackNavigator />
+          </ToastProvider>
         </NavigationContainer>
       </SafeAreaProvider>
     </ReduxProvider>

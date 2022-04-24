@@ -1,6 +1,10 @@
 import {captureError} from '../../utils/utils';
 import {USER_STORE} from '../actionType';
 import {getStoresDetail, getUserData} from '../helper/firestoreHelper';
+import {omit} from 'lodash';
+import {ASYNC_STORAGE_KEYS} from '../../utils/constants';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {startUploading} from '../../utils/utils';
 
 const loadUserData = () => async (dispatch, getState) => {
   try {
@@ -50,4 +54,65 @@ const loadUserData = () => async (dispatch, getState) => {
   });
 };
 
-export {loadUserData};
+const updatePendingImages =
+  (imageObj = {storeId: '', imageLocalUri: '', timestamp}, isDelete = false) =>
+  async (dispatch, getState) => {
+    try {
+      const {
+        userStore: {pendingImages},
+        auth: {uid},
+      } = getState();
+      const updatedPendingImages = {};
+      if (isDelete) {
+        const exist = pendingImages[imageObj.storeId]?.[imageObj.imageLocalUri];
+        if (exist) {
+          if (Object.keys(pendingImages[imageObj.storeId]).length === 1) {
+            Object.assign(
+              updatedPendingImages,
+              omit(
+                pendingImages,
+                imageObj.storeId,
+                // : `${imageObj.storeId}.${imageObj.imageLocalUri}`,
+              ),
+            );
+          } else {
+            Object.assign(updatedPendingImages, {
+              ...pendingImages,
+              ...{
+                [imageObj.storeId]: omit(
+                  pendingImages[imageObj.storeId],
+                  imageObj.imageLocalUri,
+                ),
+              },
+            });
+          }
+        } else {
+          return;
+        }
+      } else {
+        Object.assign(updatedPendingImages, pendingImages, {
+          [imageObj.storeId]: {
+            [imageObj.imageLocalUri]: {
+              timestamp: imageObj.timestamp,
+            },
+            ...(pendingImages[imageObj.storeId] || {}),
+          },
+        });
+        startUploading(imageObj, uid, dispatch);
+      }
+      dispatch({
+        type: USER_STORE.UPDATE_PENDING_IMAGES,
+        payload: {
+          pendingImages: updatedPendingImages,
+        },
+      });
+      AsyncStorage.setItem(
+        ASYNC_STORAGE_KEYS.PENDING_IMAGES,
+        JSON.stringify(updatedPendingImages),
+      );
+    } catch (err) {
+      captureError(err);
+    }
+  };
+
+export {loadUserData, updatePendingImages};

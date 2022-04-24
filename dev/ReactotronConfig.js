@@ -5,22 +5,24 @@ import Reactotron, {
   asyncStorage,
 } from 'reactotron-react-native';
 import {reactotronRedux} from 'reactotron-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {NativeModules} from 'react-native';
 
 global.RC = Reactotron; //debug mode only (useful for debugging)
 
 let scriptHostname;
-// if (window.__DEV__) {
-//   const scriptURL = NativeModules.SourceCode.scriptURL;
-//   scriptHostname = scriptURL.split('://')[1].split(':')[0];
-// }
+if (window.__DEV__) {
+  const scriptURL = NativeModules.SourceCode.scriptURL;
+  scriptHostname = scriptURL.split('://')[1].split(':')[0];
+}
 
 //run from root : `yarn reactotron` to use reactotron forn Android
 //download link : https://github.com/infinitered/reactotron/releases/download/v2.17.1/Reactotron-2.17.1.dmg
 
 Reactotron.clear();
 
-export default reactotron = Reactotron.setAsyncStorageHandler(null) // AsyncStorage would either come from `react-native` or `@react-native-community/async-storage` depending on where you get it from
-  .configure({name: 'App'})
+export default reactotron = Reactotron.setAsyncStorageHandler(AsyncStorage) // AsyncStorage would either come from `react-native` or `@react-native-community/async-storage` depending on where you get it from
+  .configure({name: 'App', host: scriptHostname})
   .useReactNative({
     asyncStorage: true, // there are more options to the async storage.
     networking: {

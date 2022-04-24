@@ -4,7 +4,8 @@ const CONTANTS = {
     HOME: 'Home',
   },
   ASYNC_STORAGE_KEYS: {
-    IS_USER_LOGGED_IN: 'isUserLoggedIn',
+    PENDING_IMAGES: 'PENDING_IMAGES',
+    LAST_LOGGED_IN_UID: 'LAST_LOGGED_IN_UID',
   },
   MIN_LENGTH: {
     USER_NAME: 5,
