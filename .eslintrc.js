@@ -1,7 +1,6 @@
 module.exports = {
-  presets: ['module:metro-react-native-babel-preset'],
-  plugins: ['react', 'import'],
   parser: '@babel/eslint-parser',
+  plugins: ['react', 'import', 'unused-imports'],
   root: true,
   env: {
     browser: true,
@@ -58,5 +57,7 @@ module.exports = {
     'no-unreachable-loop': 2,
     'require-atomic-updates': 2,
     'no-useless-escape': 0,
+    'unused-imports/no-unused-imports': 1,
+    'react/display-name': 0,
   },
 };

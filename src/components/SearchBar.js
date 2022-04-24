@@ -11,37 +11,18 @@ export default SearchBar = ({
 }) => {
   return (
     <Animated.View
-      style={{
-        flexDirection: 'row',
-        marginHorizontal: MARGINS.HORIZONTAL,
-        backgroundColor: COLORS.WHITE,
-        height: 45,
-        marginVertical: 10,
-        borderRadius: 10,
-      }}
+      style={styles.container}
       entering={SlideInRight}
       layout={Layout.springify()}>
       <TextInput
+        autoFocus
+        disableFullscreenUI
         value={searchText}
         onChangeText={handleSearchText}
         placeholder={'Search'}
-        style={{
-          borderColor: COLORS.WHITE,
-          paddingVertical: 10,
-          paddingHorizontal: 10,
-          fontSize: 16,
-          flex: 1,
-        }}
+        style={styles.input}
       />
-      <TouchableOpacity
-        onPress={handleSearchClose}
-        style={{
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: COLORS.WHITE,
-          minHeight: 45,
-          marginRight: 5,
-        }}>
+      <TouchableOpacity onPress={handleSearchClose} style={styles.closeIcon}>
         <Icon
           name={'close-outline'}
           width={30}
@@ -53,3 +34,28 @@ export default SearchBar = ({
     </Animated.View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    marginHorizontal: MARGINS.HORIZONTAL,
+    backgroundColor: COLORS.WHITE,
+    height: 45,
+    marginVertical: 10,
+    borderRadius: 10,
+  },
+  input: {
+    borderColor: COLORS.WHITE,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    fontSize: 16,
+    flex: 1,
+  },
+  closeIcon: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: COLORS.WHITE,
+    minHeight: 45,
+    marginRight: 5,
+  },
+});

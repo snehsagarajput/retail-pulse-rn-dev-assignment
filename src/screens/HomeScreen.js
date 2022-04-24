@@ -1,40 +1,20 @@
-import React, {useEffect, useState, useRef} from 'react';
-import {
-  View,
-  Text,
-  Alert,
-  TouchableOpacity,
-  FlatList,
-  StyleSheet,
-  TextInput,
-} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, StyleSheet} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
-import auth from '@react-native-firebase/auth';
 import {loadUserData} from '../redux/actions/userStoreActions';
-import {COLORS, MARGINS} from '../styles/designValues';
-import {SCREENS} from '../utils/constants';
+import {MARGINS} from '../styles/designValues';
 import SafeView from '../components/SafeView';
-import {useConstRef} from '../hooks/useConstRef';
-import FastImage from 'react-native-fast-image';
-import {
-  Placeholder,
-  PlaceholderLine,
-  PlaceholderMedia,
-  Fade,
-} from 'rn-placeholder';
-import {Icon} from 'react-native-eva-icons';
-import Animated, {Layout, SlideInRight} from 'react-native-reanimated';
-import {debounce} from 'lodash';
 import SearchBar from '../components/SearchBar';
 import HeaderOptions from '../components/HeaderOptions';
 import HeaderGreetings from '../components/HeaderGreetings';
 import StoresList from '../components/StoresList';
-import {isEmpty} from 'lodash';
 import SelectedStore from '../components/SelectedStore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {ASYNC_STORAGE_KEYS} from '../utils/constants';
 import {USER_STORE} from '../redux/actionType';
 import {captureError, uploadPendingImages} from '../utils/utils';
+import {isEmpty, debounce} from 'lodash';
+import Loader from '../components/Loader';
 
 export default HomeScreen = ({navigation, route}) => {
   const [loading, setLoading] = useState({state: false, text: ''});
@@ -42,15 +22,16 @@ export default HomeScreen = ({navigation, route}) => {
   const [filterActive, setFilterActive] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [stores, setStores] = useState([]);
-  const userStoreState = useSelector((state) => state.userStore);
+  const userStores = useSelector((state) => state.userStore?.stores || []);
+  const isFetching = useSelector((state) => state.userStore?.isLoading);
   const uid = useSelector((state) => state.auth.uid);
-  const dispatch = useDispatch();
   const [selectedStore, setSelectedStore] = useState(null);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(loadUserData());
+    dispatch(loadUserData()); //fetch user stores
 
-    const work = () =>
+    const getSetPendingImages = () =>
       AsyncStorage.getItem(ASYNC_STORAGE_KEYS.PENDING_IMAGES)
         .then((res) => {
           if (res) {
@@ -66,23 +47,30 @@ export default HomeScreen = ({navigation, route}) => {
         })
         .catch(captureError);
     if (route?.params?.justLoggedIn) {
+      //if user has just logged in
       AsyncStorage.getItem(ASYNC_STORAGE_KEYS.LAST_LOGGED_IN_UID).then(
         (val) => {
           if (val != null && uid === val) {
-            work();
+            //if same user whose images were pending to be uploaded logged in again
+            getSetPendingImages();
           } else {
-            AsyncStorage.setItem(ASYNC_STORAGE_KEYS.LAST_LOGGED_IN_UID, uid);
+            //different user logged in
+            AsyncStorage.multiSet([
+              [ASYNC_STORAGE_KEYS.LAST_LOGGED_IN_UID, uid],
+              [ASYNC_STORAGE_KEYS.PENDING_IMAGES, ''],
+            ]);
           }
         },
       );
     } else {
-      work();
+      //if app opened
+      getSetPendingImages();
     }
   }, []);
 
   const delayedQuery = debounce((text) => {
     setStores(
-      userStoreState.stores.filter((store) => {
+      userStores.filter((store) => {
         const query = text.toLowerCase();
         return (
           (store?.data?.name?.toLowerCase?.() || '').includes(query) ||
@@ -157,10 +145,8 @@ export default HomeScreen = ({navigation, route}) => {
           />
         ) : null}
         <StoresList
-          isLoading={userStoreState.isLoading}
-          stores={
-            searchActive && searchText?.length ? stores : userStoreState.stores
-          }
+          isLoading={isFetching}
+          stores={searchActive && searchText?.length ? stores : userStores}
           onItemPress={handleStorePress}
         />
       </SafeView>
@@ -176,10 +162,10 @@ export default HomeScreen = ({navigation, route}) => {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
     marginTop: 10,
-    justifyContent: 'space-between',
     marginBottom: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginHorizontal: MARGINS.HORIZONTAL,
   },
 });

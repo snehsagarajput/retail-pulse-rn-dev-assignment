@@ -1,13 +1,11 @@
 import React from 'react';
-import {View, StyleSheet, Dimensions} from 'react-native';
-import {COLORS, MARGINS} from '../styles/designValues';
+import {StyleSheet, Dimensions} from 'react-native';
+import {COLORS} from '../styles/designValues';
 import Modal from 'react-native-modal';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {ToastProvider} from 'react-native-toast-notifications';
 
 export default ModalComponent = ({isVisible, onClose, style, children}) => {
   const width = Dimensions.get('screen').width;
-
   return (
     <Modal
       hasBackdrop

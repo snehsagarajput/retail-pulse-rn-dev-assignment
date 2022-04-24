@@ -1,59 +1,48 @@
 import React, {useState} from 'react';
-import {
-  View,
-  TouchableOpacity,
-  StyleSheet,
-  Text,
-  Dimensions,
-  Alert,
-  Linking,
-} from 'react-native';
-import {COLORS, MARGINS} from '../styles/designValues';
-import auth from '@react-native-firebase/auth';
+import {TouchableOpacity, StyleSheet, Text, Alert, Linking} from 'react-native';
+import {COLORS} from '../styles/designValues';
 import {useSelector, useDispatch} from 'react-redux';
 import {updatePendingImages} from '../redux/actions/userStoreActions';
-import {SCREENS} from '../utils/constants';
 import {captureError, isIOS} from '../utils/utils';
 import {Icon} from 'react-native-eva-icons';
 import ModalComponent from './Modal';
 import ImagePicker from 'react-native-image-crop-picker';
 import * as RNFS from 'react-native-fs';
-import {useToast} from 'react-native-toast-notifications';
 
 export default SelectedStore = ({onClose, selectedStore}) => {
   const dispatch = useDispatch();
-  const Toast = useToast();
   const [justUploaded, setJustUploaded] = useState(false);
   const pendingImagesCount = useSelector(
     (state) =>
-      Object.keys(state.userStore.pendingImages?.[selectedStore?.id] ?? {})
+      Object.keys(state.userStore?.pendingImages?.[selectedStore?.id] ?? {})
         .length,
   );
 
   const onUploadPress = async () => {
-    const copyAssests = (uri) => {
-      uri = isIOS ? decodeURIComponent(uri) : uri;
-      const imagePath = `${
-        RNFS.DocumentDirectoryPath
-      }/${new Date().toISOString()}.jpg`.replace(/:/g, '-');
-      RNFS.copyFile(uri, imagePath)
-        .then(() => {
-          setJustUploaded(true);
-          dispatch(
-            updatePendingImages({
-              storeId: selectedStore.id,
-              imageLocalUri: imagePath,
-              timestamp: Date.now(),
-            }),
-          );
-        })
-        .catch(captureError);
-    };
     try {
+      const copyAssests = (uri) => {
+        //copy image to data directory for background upload across sessions
+        uri = isIOS ? decodeURIComponent(uri) : uri;
+        const imagePath = `${
+          RNFS.DocumentDirectoryPath
+        }/${new Date().toISOString()}.jpg`.replace(/:/g, '-');
+        RNFS.copyFile(uri, imagePath)
+          .then(() => {
+            setJustUploaded(true);
+            dispatch(
+              updatePendingImages({
+                storeId: selectedStore.id,
+                imageLocalUri: imagePath,
+                timestamp: Date.now(),
+              }),
+            );
+          })
+          .catch(captureError);
+      };
       ImagePicker.openCamera({
         cropping: true,
         multiple: true,
-        compressImageQuality: 0.2,
+        compressImageQuality: 0.4,
       })
         .then((image) => {
           if (image?.path) {
@@ -99,19 +88,17 @@ export default SelectedStore = ({onClose, selectedStore}) => {
       <Text numberOfLines={4} style={styles.storeAddress}>
         {selectedStore.data.address}
       </Text>
-      {
-        <Text
-          style={[
-            styles.imagePendingText,
-            {marginVertical: pendingImagesCount || justUploaded ? 25 : 5},
-          ]}>
-          {pendingImagesCount
-            ? `Uploading ${pendingImagesCount} Images.`
-            : justUploaded
-            ? 'All Images Uploaded Successfully. 🎉'
-            : ''}
-        </Text>
-      }
+      <Text
+        style={[
+          styles.imagePendingText,
+          {marginVertical: pendingImagesCount || justUploaded ? 25 : 5},
+        ]}>
+        {pendingImagesCount
+          ? `Uploading ${pendingImagesCount} Images.`
+          : justUploaded
+          ? 'All Images Uploaded Successfully. 🎉'
+          : ''}
+      </Text>
       <TouchableOpacity onPress={onUploadPress} style={styles.uploadBtn}>
         <Icon
           name={'camera'}

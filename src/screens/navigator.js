@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import {SCREENS} from '../utils/constants';
 import {COLORS} from '../styles/designValues';
@@ -27,9 +27,7 @@ export default StackNavigator = () => {
         getComponent={() => require('./HomeScreen').default}
         options={{
           ...defaultNavigationOptions,
-          cardStyle: {
-            backgroundColor: COLORS.HOME_SCREEN_BG,
-          },
+          cardStyle: {backgroundColor: COLORS.HOME_SCREEN_BG},
         }}
       />
     </Stack.Navigator>

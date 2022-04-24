@@ -1,12 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {useSelector, useDispatch} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import auth from '@react-native-firebase/auth';
 import SplashView from '../components/SplashView';
 import {loadUserAuth} from '../redux/actions/authActions';
 import Login from '../components/Login';
 import SafeView from '../components/SafeView';
-import {SCREENS, MIN_LENGTH} from '../utils/constants';
-import {KeyboardAvoidingView} from 'react-native';
+import {SCREENS} from '../utils/constants';
 
 export default LoginScreen = ({navigation, route}) => {
   const [showSplashScreen, setShowSplashScreen] = useState(true);
@@ -51,7 +50,6 @@ export default LoginScreen = ({navigation, route}) => {
   if (showSplashScreen) {
     return <SplashView />;
   }
-
   return (
     <SafeView>
       <Login />

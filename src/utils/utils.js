@@ -4,6 +4,7 @@ import {backOff} from 'exponential-backoff';
 import {addToStoreVisitNode} from '../redux/helper/firestoreHelper';
 import {updatePendingImages} from '../redux/actions/userStoreActions';
 import {isEmpty, forOwn} from 'lodash';
+import * as RNFS from 'react-native-fs';
 
 const isIOS = Platform.OS === 'ios';
 
@@ -34,11 +35,11 @@ const getWishMsg = () => {
 const imageUploadPromise = (imageLocalPath, imagePathFirebaseStorage) => {
   const tryUploading = () =>
     new Promise((resolve) => {
+      const onFail = (err) => {
+        captureError(err);
+        return resolve(null);
+      };
       try {
-        const onFail = (err) => {
-          captureError(err);
-          return resolve(null);
-        };
         const reference = storage().ref(imagePathFirebaseStorage);
         const task = reference.putFile(imageLocalPath);
         task
@@ -66,8 +67,9 @@ const startUploading = (imageObj, uid, dispatch) =>
       addToStoreVisitNode(imageObj.storeId, uid, {
         imageUrl,
         timestamp: imageObj.timestamp,
-      });
-      dispatch(updatePendingImages(imageObj, true));
+      }); //add to store visit node
+      dispatch(updatePendingImages(imageObj, true)); //remove from store and async stoarge
+      RNFS.unlink(imageObj.imageLocalUri).catch(captureError); //delete image
     }
   });
 

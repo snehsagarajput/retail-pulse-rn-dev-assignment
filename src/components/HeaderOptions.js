@@ -1,9 +1,9 @@
 import React, {useRef} from 'react';
 import {View, TouchableOpacity, StyleSheet, Alert} from 'react-native';
-import {COLORS, MARGINS} from '../styles/designValues';
+import {COLORS} from '../styles/designValues';
 import {Icon} from 'react-native-eva-icons';
 import auth from '@react-native-firebase/auth';
-import {useSelector, useDispatch} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import {removeUserAuth} from '../redux/actions/authActions';
 import {SCREENS} from '../utils/constants';
 import {captureError} from '../utils/utils';
@@ -49,14 +49,8 @@ const HeaderOptions = ({
       'Logout',
       'Are you sure you want to logout?',
       [
-        {
-          text: 'No',
-          style: 'cancel',
-        },
-        {
-          text: 'Yes',
-          onPress: logOut,
-        },
+        {text: 'No', style: 'cancel'},
+        {text: 'Yes', onPress: logOut},
       ],
       {cancelable: true},
     );

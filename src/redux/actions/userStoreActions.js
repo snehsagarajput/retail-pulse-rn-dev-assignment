@@ -1,10 +1,9 @@
-import {captureError} from '../../utils/utils';
 import {USER_STORE} from '../actionType';
 import {getStoresDetail, getUserData} from '../helper/firestoreHelper';
-import {omit} from 'lodash';
+import {omit, orderBy} from 'lodash';
 import {ASYNC_STORAGE_KEYS} from '../../utils/constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {startUploading} from '../../utils/utils';
+import {startUploading, captureError} from '../../utils/utils';
 
 const loadUserData = () => async (dispatch, getState) => {
   try {
@@ -35,7 +34,9 @@ const loadUserData = () => async (dispatch, getState) => {
         type: USER_STORE.LOAD_USER_STORE_DATA,
         payload: {
           name: userData.name,
-          stores: storesData,
+          stores: orderBy(storesData, (storeObj) =>
+            storeObj?.data?.name?.toLowerCase?.(),
+          ),
         },
       });
     }
@@ -55,7 +56,10 @@ const loadUserData = () => async (dispatch, getState) => {
 };
 
 const updatePendingImages =
-  (imageObj = {storeId: '', imageLocalUri: '', timestamp}, isDelete = false) =>
+  (
+    imageObj = {storeId: '', imageLocalUri: '', timestamp: null},
+    isDelete = false,
+  ) =>
   async (dispatch, getState) => {
     try {
       const {

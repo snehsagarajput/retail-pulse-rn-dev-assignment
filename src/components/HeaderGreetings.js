@@ -1,7 +1,7 @@
-import React, {useEffect, useState, useRef} from 'react';
-import {View, Text, StyleSheet, useWindowDimensions} from 'react-native';
-import {useSelector, useDispatch} from 'react-redux';
-import {COLORS, MARGINS} from '../styles/designValues';
+import React from 'react';
+import {View, Text, StyleSheet} from 'react-native';
+import {useSelector} from 'react-redux';
+import {COLORS} from '../styles/designValues';
 import {useConstRef} from '../hooks/useConstRef';
 import {getWishMsg, isIOS} from '../utils/utils';
 import {Placeholder, PlaceholderLine, Fade} from 'rn-placeholder';

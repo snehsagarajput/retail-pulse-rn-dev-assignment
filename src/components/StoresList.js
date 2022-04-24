@@ -1,18 +1,8 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  StyleSheet,
-  useWindowDimensions,
-  Platform,
-  TouchableOpacity,
-} from 'react-native';
-import {ASYNC_STORAGE_KEYS} from '../utils/constants';
+import {View, Text, FlatList, StyleSheet, TouchableOpacity} from 'react-native';
 import {COLORS, MARGINS} from '../styles/designValues';
-import {SCREENS} from '../utils/constants';
 import {useConstRef} from '../hooks/useConstRef';
-import {captureError, isIOS} from '../utils/utils';
+import {isIOS} from '../utils/utils';
 import FastImage from 'react-native-fast-image';
 import {
   Placeholder,

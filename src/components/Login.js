@@ -1,16 +1,8 @@
-import React, {useState, useEffect} from 'react';
-import {
-  TextInput,
-  Text,
-  View,
-  ScrollView,
-  KeyboardAvoidingView,
-  Image,
-  Alert,
-} from 'react-native';
+import React, {useState} from 'react';
+import {TextInput, Text, ScrollView, StyleSheet, Alert} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import {COLORS, MARGINS} from '../styles/designValues';
-import {SCREENS, MIN_LENGTH} from '../utils/constants';
+import {MIN_LENGTH} from '../utils/constants';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import Loader from './Loader';
 import {captureError} from '../utils/utils';
@@ -38,7 +30,10 @@ export default Login = () => {
         ) {
           errorMsg = 'You have entered an invalid username or password.';
         } else if (error.code === 'auth/too-many-requests') {
-          errorMsg = 'You have entered an invalid username or password.';
+          errorMsg =
+            'You have exceed maximum number of requests. Please try again later.';
+        } else if (error.code === 'auth/network-request-failed') {
+          errorMsg = 'Please check your network connection and try again.';
         } else {
           captureError(error);
           errorMsg =
@@ -55,78 +50,81 @@ export default Login = () => {
   return (
     <>
       {loading?.state ? <Loader showDelay text={loading.text} /> : null}
-      <ScrollView style={{flex: 1, marginHorizontal: MARGINS.HORIZONTAL}}>
-        <Text
-          style={{
-            fontSize: 40,
-            textAlign: 'center',
-            fontWeight: '700',
-            color: COLORS.BLACK,
-            marginTop: '12%',
-          }}>
-          {'Welcome \nto Retail Pulse'}
-        </Text>
-        <Text
-          style={{
-            fontSize: 16,
-            marginTop: 10,
-            textAlign: 'center',
-            fontWeight: '700',
-            color: COLORS.SUBTEXT,
-          }}>
-          {'Hope you are well today'}
-        </Text>
+      <ScrollView style={styles.scrollView}>
+        <Text style={styles.welcomeMsg}>{'Welcome \nto Retail Pulse'}</Text>
+        <Text style={styles.wishMsg}>{'Hope you are well today'}</Text>
         <TextInput
+          disableFullscreenUI
           value={username}
           onChangeText={setUsername}
-          style={{
-            backgroundColor: COLORS.WHITE,
-            marginTop: 40,
-            minHeight: 45,
-            borderColor: COLORS.BORDER,
-            borderBottomWidth: 1,
-            borderRadius: 5,
-            paddingVertical: 5,
-            paddingHorizontal: 10,
-          }}
+          style={styles.input}
           placeholder={'Email'}
           maxLength={254}
           returnKeyType={'next'}
         />
         <TextInput
+          disableFullscreenUI
           secureTextEntry
           value={password}
           onChangeText={setPassword}
-          style={{
-            backgroundColor: COLORS.WHITE,
-            marginTop: 40,
-            minHeight: 45,
-            borderColor: COLORS.BORDER,
-            borderBottomWidth: 1,
-            borderRadius: 5,
-            paddingVertical: 5,
-            paddingHorizontal: 10,
-          }}
+          style={styles.input}
           textContentType={'password'}
           placeholder={'Password'}
           returnKeyType={'done'}
         />
         <TouchableOpacity
           disabled={isDisabled}
-          style={{
-            backgroundColor: isDisabled
-              ? COLORS.PRIMARY_BUTTON + '66'
-              : COLORS.PRIMARY_BUTTON,
-            minHeight: 50,
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: 10,
-            marginTop: 40,
-          }}
+          style={[
+            styles.loginBtn,
+            {backgroundColor: COLORS.PRIMARY_BUTTON + (isDisabled ? '66' : '')},
+          ]}
           onPress={handleLoginPress}>
-          <Text style={{fontSize: 24, color: COLORS.WHITE}}>{'Login'}</Text>
+          <Text style={styles.loginText}>{'Login'}</Text>
         </TouchableOpacity>
       </ScrollView>
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+    marginHorizontal: MARGINS.HORIZONTAL,
+  },
+  welcomeMsg: {
+    fontSize: 40,
+    textAlign: 'center',
+    fontWeight: '700',
+    color: COLORS.BLACK,
+    marginTop: '12%',
+  },
+  wishMsg: {
+    fontSize: 16,
+    marginTop: 10,
+    textAlign: 'center',
+    fontWeight: '700',
+    color: COLORS.SUBTEXT,
+  },
+  input: {
+    backgroundColor: COLORS.WHITE,
+    marginTop: 40,
+    minHeight: 45,
+    borderColor: COLORS.BORDER,
+    borderBottomWidth: 1,
+    borderRadius: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+  },
+  loginBtn: {
+    minHeight: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+    marginTop: 40,
+    marginBottom: 40,
+  },
+  loginText: {
+    fontSize: 24,
+    color: COLORS.WHITE,
+  },
+});
