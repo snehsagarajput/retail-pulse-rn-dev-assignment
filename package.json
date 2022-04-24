@@ -13,7 +13,7 @@
     "ios-pod": "cd ios && rm -rf Pods && rm -rf Podfile.lock && xcodebuild clean && arch -x86_64 pod install",
     "cb-ios": "yarn install && yarn ios-pod && yarn ios --verbose",
     "clean-android": "cd android && ./gradlew clean",
-    "cb-android": "yarn install && yarn clean-android && yarn run android",
+    "cb-a": "yarn install && yarn clean-android && yarn run android",
     "pod-deep-remove": "rm -rf ~/Library/Caches/CocoaPods && rm -rf ios/Pods && rm -rf ~/Library/Developer/Xcode/DerivedData/* && cd ios && rm -rf Podfile.lock && pod deintegrate && pod setup && xcodebuild clean",
     "b-ios": "yarn install && cd ios && pod install && cd .. && yarn ios"
   },

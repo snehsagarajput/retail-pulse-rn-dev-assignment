@@ -1,4 +1,7 @@
 import {BOARD_SIZE} from 'utils/constants';
+import {Platform} from 'react-native';
+
+const isIOS = Platform.OS === 'ios';
 
 const captureError = (error) => {
   console.error(error);
@@ -24,4 +27,4 @@ const getWishMsg = () => {
   return msg;
 };
 
-export {captureError, getWishMsg};
+export {isIOS, captureError, getWishMsg};
