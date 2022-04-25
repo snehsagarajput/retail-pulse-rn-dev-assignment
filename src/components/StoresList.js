@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, Text, FlatList, StyleSheet, TouchableOpacity} from 'react-native';
-import {COLORS, MARGINS} from '../styles/designValues';
+import {COLORS, MARGINS, HEIGHTS} from '../styles/designValues';
 import {useConstRef} from '../hooks/useConstRef';
 import {isIOS} from '../utils/utils';
 import FastImage from 'react-native-fast-image';
@@ -78,6 +78,11 @@ export default StoresList = ({isLoading, stores, onItemPress}) => {
       ListEmptyComponent={() => (
         <Text style={styles.noStores}>{'No Store Found'}</Text>
       )}
+      getItemLayout={(_, index) => ({
+        length: HEIGHTS.STORE_ITEM + 20,
+        offset: (HEIGHTS.STORE_ITEM + 20) * index,
+        index,
+      })}
       renderItem={isLoading ? renderPlaceHolder : renderStoreInfo}
     />
   );
@@ -96,7 +101,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.WHITE,
     marginVertical: 5,
-    height: 80,
+    height: HEIGHTS.STORE_ITEM,
     borderRadius: 10,
     padding: 5,
     flexDirection: 'row',

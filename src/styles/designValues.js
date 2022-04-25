@@ -17,3 +17,7 @@ export const COLORS = {
 export const MARGINS = {
   HORIZONTAL: 15,
 };
+
+export const HEIGHTS = {
+  STORE_ITEM: 80,
+};
