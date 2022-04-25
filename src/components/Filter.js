@@ -13,10 +13,14 @@ import {Icon} from 'react-native-eva-icons';
 import ModalComponent from './Modal';
 import {FILTER_KEYS, ALL_KEY} from '../utils/constants';
 import {getDefaultFilter} from '../utils/utils';
+import {cloneDeep} from 'lodash';
 
 export default Filter = ({onClose, applyFilter}) => {
+  const currentFilter = useSelector(
+    (state) => state.userStore?.currentFilter ?? {},
+  );
   const [selectedFilters, setSelectedFilters] = useState(
-    useSelector((state) => state.userStore?.currentFilter ?? {}),
+    cloneDeep(currentFilter),
   );
   const filterOptions = useSelector(
     (state) => state.userStore?.filterOptions ?? {},
