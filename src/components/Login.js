@@ -59,7 +59,9 @@ export default Login = () => {
 
   return (
     <>
-      {loading?.state ? <Loader showDelay text={loading.text} /> : null}
+      {loading?.state ? (
+        <Loader isLottie showDelay text={loading.text} />
+      ) : null}
       <ScrollView style={styles.scrollView}>
         <Text style={styles.welcomeMsg}>{'Welcome \nto Retail Pulse'}</Text>
         <Text style={styles.wishMsg}>{'Hope you are well today'}</Text>

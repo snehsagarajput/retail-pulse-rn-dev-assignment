@@ -3,8 +3,9 @@ import {ActivityIndicator, Text, View, StyleSheet} from 'react-native';
 import {COLORS} from '../styles/designValues';
 import {DELAY_LOADING_TIME} from '../utils/constants';
 import {useBoolean} from '../hooks/useBoolean';
+import LottieView from 'lottie-react-native';
 
-export default Loader = ({text, showDelay = false}) => {
+export default Loader = ({text, showDelay = false, isLottie = true}) => {
   const [showDelayMsg, setShowDelayMsg] = useBoolean(false);
 
   useEffect(() => {
@@ -19,7 +20,16 @@ export default Loader = ({text, showDelay = false}) => {
 
   return (
     <View style={styles.container}>
-      <ActivityIndicator size={'large'} color={COLORS.BLACK} />
+      {isLottie ? (
+        <LottieView
+          source={require('../../assets/loading.json')}
+          autoPlay
+          loop
+          style={styles.lottieMargin}
+        />
+      ) : (
+        <ActivityIndicator size={'large'} color={COLORS.BLACK} />
+      )}
       <Text style={styles.text}>
         {showDelayMsg
           ? "It's taking longer than usual. Please check your Internet Connection."
@@ -48,5 +58,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
     elevation: 10,
+  },
+  lottieMargin: {
+    marginBottom: 40,
   },
 });

@@ -6,6 +6,7 @@ import {
   Alert,
   Linking,
   StyleSheet,
+  ActivityIndicator,
 } from 'react-native';
 import {COLORS} from '../styles/designValues';
 import {useSelector, useDispatch} from 'react-redux';
@@ -99,7 +100,7 @@ export default SelectedStore = ({onClose, selectedStore}) => {
     <>
       {isIOS && viewImage ? null : (
         <ModalComponent isVisible={true} onClose={onClose}>
-          <View style={{justifyContent: 'space-between', flexDirection: 'row'}}>
+          <View style={styles.mainView}>
             <Text numberOfLines={3} style={styles.storeName}>
               {selectedStore.data.name}
             </Text>
@@ -114,23 +115,37 @@ export default SelectedStore = ({onClose, selectedStore}) => {
                 />
               </TouchableOpacity>
             ) : null}
+            <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
+              <Icon
+                name={'close'}
+                width={28}
+                height={28}
+                fill={COLORS.WARN}
+                animation={'pulse'}
+              />
+            </TouchableOpacity>
           </View>
           <Text numberOfLines={4} style={styles.storeAddress}>
             {selectedStore.data.address}
           </Text>
-          <Text
-            style={[
-              styles.imagePendingText,
-              {marginVertical: pendingImagesCount || justUploaded ? 25 : 5},
-            ]}>
-            {pendingImagesCount
-              ? `Uploading ${pendingImagesCount} Image${
-                  pendingImagesCount > 1 ? 's' : ''
-                }.`
-              : justUploaded
-              ? 'All Images Uploaded Successfully. 🎉'
-              : ''}
-          </Text>
+          <View style={styles.pendingText}>
+            <Text
+              style={[
+                styles.imagePendingText,
+                {marginVertical: pendingImagesCount || justUploaded ? 25 : 5},
+              ]}>
+              {pendingImagesCount
+                ? `Uploading ${pendingImagesCount} Image${
+                    pendingImagesCount > 1 ? 's' : ''
+                  }`
+                : justUploaded
+                ? 'All Images Uploaded Successfully. 🎉'
+                : ''}
+            </Text>
+            {pendingImagesCount ? (
+              <ActivityIndicator size={'small'} color={COLORS.BLACK} />
+            ) : null}
+          </View>
           <TouchableOpacity onPress={onUploadPress} style={styles.uploadBtn}>
             <Icon
               name={'camera'}
@@ -186,5 +201,18 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     fontSize: 16,
     textAlign: 'center',
+    marginRight: 5,
+  },
+  closeBtn: {
+    marginLeft: 5,
+  },
+  mainView: {
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+  },
+  pendingText: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

@@ -205,6 +205,6 @@ const styles = StyleSheet.create({
   optionsText: {
     fontSize: 14,
     textTransform: 'capitalize',
-    fontWeight: '200',
+    fontWeight: '300',
   },
 });
