@@ -2,10 +2,12 @@ import React from 'react';
 import {StyleSheet, useWindowDimensions} from 'react-native';
 import {COLORS} from '../styles/designValues';
 import Modal from 'react-native-modal';
+import {useHeaderHeight} from '@react-navigation/elements';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
 export default ModalComponent = ({isVisible, onClose, style, children}) => {
   const {width, height} = useWindowDimensions();
+
   return (
     <Modal
       hasBackdrop
@@ -18,7 +20,14 @@ export default ModalComponent = ({isVisible, onClose, style, children}) => {
       style={[styles.modal]}
       onBackdropPress={onClose}
       onBackButtonPress={onClose}>
-      <SafeAreaView style={[styles.modalView, style]}>{children}</SafeAreaView>
+      <SafeAreaView
+        style={[
+          styles.modalView,
+          {paddingHorizontal: width > height ? 40 : 22},
+          style,
+        ]}>
+        {children}
+      </SafeAreaView>
     </Modal>
   );
 };
@@ -32,6 +41,6 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.WHITE,
     padding: 22,
     borderRadius: 10,
-    borderColor: 'rgba(0, 0, 0, 0.1)',
+    borderColor: 'rgba(0, 0, 0, 0.12)',
   },
 });

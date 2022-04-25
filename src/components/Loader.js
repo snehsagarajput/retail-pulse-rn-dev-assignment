@@ -48,8 +48,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     zIndex: 100,
     position: 'absolute',
-    height: '80%',
-    width: '100%', //relative to parent
+    backgroundColor: 'rgba(0,0,0,0.15)',
+    ...StyleSheet.absoluteFillObject,
   },
   text: {
     color: COLORS.BLACK,
