@@ -5,7 +5,7 @@ import {
   StyleSheet,
   Text,
   View,
-  Dimensions,
+  useWindowDimensions,
 } from 'react-native';
 import {COLORS} from '../styles/designValues';
 import {useSelector} from 'react-redux';
@@ -21,7 +21,7 @@ export default Filter = ({onClose, applyFilter}) => {
   const filterOptions = useSelector(
     (state) => state.userStore?.filterOptions ?? {},
   );
-  const {height} = Dimensions.get('screen');
+  const {height} = useWindowDimensions();
 
   const onItemPress = (categoryName, item) => {
     setSelectedFilters((prev) => {

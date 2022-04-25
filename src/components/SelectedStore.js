@@ -1,5 +1,12 @@
 import React, {useState} from 'react';
-import {TouchableOpacity, StyleSheet, Text, Alert, Linking} from 'react-native';
+import {
+  TouchableOpacity,
+  View,
+  Text,
+  Alert,
+  Linking,
+  StyleSheet,
+} from 'react-native';
 import {COLORS} from '../styles/designValues';
 import {useSelector, useDispatch} from 'react-redux';
 import {updatePendingImages} from '../redux/actions/userStoreActions';
@@ -8,14 +15,22 @@ import {Icon} from 'react-native-eva-icons';
 import ModalComponent from './Modal';
 import ImagePicker from 'react-native-image-crop-picker';
 import * as RNFS from 'react-native-fs';
+import ImageViewer from './ImageViewer';
+import {useBoolean} from '../hooks/useBoolean';
 
 export default SelectedStore = ({onClose, selectedStore}) => {
   const dispatch = useDispatch();
+  const [viewImage, setViewImage] = useBoolean(false);
   const [justUploaded, setJustUploaded] = useState(false);
   const pendingImagesCount = useSelector(
     (state) =>
       Object.keys(state.userStore?.pendingImages?.[selectedStore?.id] ?? {})
         .length,
+  );
+  const uid = useSelector((state) => state.auth.uid);
+  const uploadedImages = useSelector(
+    (state) =>
+      state.userStore?.uploadedImages?.[selectedStore?.id]?.[uid] ?? [],
   );
 
   const onUploadPress = async () => {
@@ -81,35 +96,57 @@ export default SelectedStore = ({onClose, selectedStore}) => {
   };
 
   return (
-    <ModalComponent isVisible={true} onClose={onClose}>
-      <Text numberOfLines={3} style={styles.storeName}>
-        {selectedStore.data.name}
-      </Text>
-      <Text numberOfLines={4} style={styles.storeAddress}>
-        {selectedStore.data.address}
-      </Text>
-      <Text
-        style={[
-          styles.imagePendingText,
-          {marginVertical: pendingImagesCount || justUploaded ? 25 : 5},
-        ]}>
-        {pendingImagesCount
-          ? `Uploading ${pendingImagesCount} Images.`
-          : justUploaded
-          ? 'All Images Uploaded Successfully. 🎉'
-          : ''}
-      </Text>
-      <TouchableOpacity onPress={onUploadPress} style={styles.uploadBtn}>
-        <Icon
-          name={'camera'}
-          width={26}
-          height={26}
-          fill={COLORS.WHITE}
-          animation={'pulse'}
-        />
-        <Text style={styles.btnText}>{'Upload'}</Text>
-      </TouchableOpacity>
-    </ModalComponent>
+    <>
+      {isIOS && viewImage ? null : (
+        <ModalComponent isVisible={true} onClose={onClose}>
+          <View style={{justifyContent: 'space-between', flexDirection: 'row'}}>
+            <Text numberOfLines={3} style={styles.storeName}>
+              {selectedStore.data.name}
+            </Text>
+            {uploadedImages.length ? (
+              <TouchableOpacity onPress={setViewImage}>
+                <Icon
+                  name={'image'}
+                  width={26}
+                  height={26}
+                  fill={COLORS.PRIMARY_BUTTON_DARK}
+                  animation={'pulse'}
+                />
+              </TouchableOpacity>
+            ) : null}
+          </View>
+          <Text numberOfLines={4} style={styles.storeAddress}>
+            {selectedStore.data.address}
+          </Text>
+          <Text
+            style={[
+              styles.imagePendingText,
+              {marginVertical: pendingImagesCount || justUploaded ? 25 : 5},
+            ]}>
+            {pendingImagesCount
+              ? `Uploading ${pendingImagesCount} Image${
+                  pendingImagesCount > 1 ? 's' : ''
+                }.`
+              : justUploaded
+              ? 'All Images Uploaded Successfully. 🎉'
+              : ''}
+          </Text>
+          <TouchableOpacity onPress={onUploadPress} style={styles.uploadBtn}>
+            <Icon
+              name={'camera'}
+              width={26}
+              height={26}
+              fill={COLORS.WHITE}
+              animation={'pulse'}
+            />
+            <Text style={styles.btnText}>{'Upload'}</Text>
+          </TouchableOpacity>
+        </ModalComponent>
+      )}
+      {viewImage ? (
+        <ImageViewer images={uploadedImages} onClose={setViewImage} />
+      ) : null}
+    </>
   );
 };
 
@@ -119,6 +156,7 @@ const styles = StyleSheet.create({
     textTransform: 'capitalize',
     fontWeight: '600',
     fontSize: 22,
+    flex: 1,
   },
   storeAddress: {
     color: COLORS.LIGHT_GREY,

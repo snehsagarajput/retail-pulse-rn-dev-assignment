@@ -2,7 +2,7 @@ import {USER_STORE} from '../actionType';
 import {getDefaultFilter} from '../../utils/utils';
 
 const initialState = {
-  isLoading: false,
+  isLoading: true,
   name: '',
   stores: [],
   isError: false,
@@ -10,6 +10,8 @@ const initialState = {
   filterOptions: {},
   currentFilter: getDefaultFilter(),
   filteredStore: [],
+  uploadedImages: {},
+  listeners: [],
 };
 
 export default userStoreReducer = (state = initialState, action) => {
@@ -18,6 +20,12 @@ export default userStoreReducer = (state = initialState, action) => {
       return {
         ...state,
         isLoading: action.payload.isLoading ? true : false,
+      };
+    }
+    case USER_STORE.UPDATE_LISTENERS: {
+      return {
+        ...state,
+        listeners: [...state.listeners, action.payload.listeners],
       };
     }
     case USER_STORE.LOAD_USER_STORE_DATA: {
@@ -55,6 +63,19 @@ export default userStoreReducer = (state = initialState, action) => {
       return {
         ...state,
         pendingImages: action.payload.pendingImages,
+      };
+    }
+    case USER_STORE.UPDATE_UPLOADED_IMAGES: {
+      return {
+        ...state,
+        uploadedImages: action.payload.uploadedImages,
+      };
+    }
+    case USER_STORE.DEACTIVATE_LISTENERS: {
+      state.listeners.forEach((listener) => listener?.());
+      return {
+        ...state,
+        listeners: [],
       };
     }
     case USER_STORE.RESET_STATE: {

@@ -1,4 +1,4 @@
-import {AUTH} from '../actionType';
+import {AUTH, USER_STORE} from '../actionType';
 
 const loadUserAuth = (userObj) => async (dispatch) => {
   dispatch({
@@ -11,6 +11,9 @@ const loadUserAuth = (userObj) => async (dispatch) => {
 };
 
 const removeUserAuth = () => async (dispatch) => {
+  dispatch({
+    type: USER_STORE.DEACTIVATE_LISTENERS,
+  });
   dispatch({
     type: AUTH.RESET_STATE,
   });

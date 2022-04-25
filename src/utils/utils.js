@@ -13,6 +13,10 @@ const captureError = (error) => {
   console.error(error);
 };
 
+const captureInfo = (obj) => {
+  console.log(obj);
+};
+
 const getWishMsg = () => {
   let msg = 'Good ';
   try {
@@ -66,7 +70,7 @@ const startUploading = (imageObj, uid, dispatch) =>
   ).then((imageUrl) => {
     if (imageUrl?.length) {
       addToStoreVisitNode(imageObj.storeId, uid, {
-        imageUrl,
+        uri: imageUrl,
         timestamp: imageObj.timestamp,
       }); //add to store visit node
       dispatch(updatePendingImages(imageObj, true)); //remove from store and async stoarge
@@ -103,6 +107,7 @@ const getDefaultFilter = () => {
 export {
   isIOS,
   captureError,
+  captureInfo,
   getWishMsg,
   startUploading,
   uploadPendingImages,

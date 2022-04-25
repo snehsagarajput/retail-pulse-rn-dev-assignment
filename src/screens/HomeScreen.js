@@ -4,6 +4,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import {
   loadUserData,
   updateCurrentFilter,
+  activateImagesListener,
 } from '../redux/actions/userStoreActions';
 import {MARGINS} from '../styles/designValues';
 import SafeView from '../components/SafeView';
@@ -39,6 +40,7 @@ export default HomeScreen = ({navigation, route}) => {
 
   useEffect(() => {
     dispatch(loadUserData()); //fetch user stores
+    dispatch(activateImagesListener());
 
     const getSetPendingImages = () =>
       AsyncStorage.getItem(ASYNC_STORAGE_KEYS.PENDING_IMAGES)

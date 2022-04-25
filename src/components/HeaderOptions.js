@@ -4,10 +4,12 @@ import {COLORS} from '../styles/designValues';
 import {Icon} from 'react-native-eva-icons';
 import auth from '@react-native-firebase/auth';
 import {removeUserAuth} from '../redux/actions/authActions';
+import {activateImagesListener} from '../redux/actions/userStoreActions';
 import {SCREENS} from '../utils/constants';
 import {captureError, getDefaultFilter} from '../utils/utils';
 import {isEqual} from 'lodash';
 import {useSelector, useDispatch} from 'react-redux';
+import {USER_STORE} from '../redux/actionType';
 
 const defaultFilter = getDefaultFilter();
 
@@ -34,6 +36,9 @@ const HeaderOptions = ({
   const logoutAction = () => {
     logoutRef?.current?.startAnimation?.();
     const logOut = () => {
+      dispatch({
+        type: USER_STORE.DEACTIVATE_LISTENERS,
+      });
       setLoading({state: true, text: 'Logging out...'});
       auth()
         .signOut()
@@ -44,7 +49,10 @@ const HeaderOptions = ({
             routes: [{name: SCREENS.LOGIN, params: {justLoggedOut: true}}],
           });
         })
-        .catch(captureError)
+        .catch((e) => {
+          captureError(e);
+          dispatch(activateImagesListener());
+        })
         .finally(() => {
           setLoading({state: false, text: ''});
         });

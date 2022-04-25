@@ -1,11 +1,11 @@
 import React from 'react';
-import {StyleSheet, Dimensions} from 'react-native';
+import {StyleSheet, useWindowDimensions} from 'react-native';
 import {COLORS} from '../styles/designValues';
 import Modal from 'react-native-modal';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
 export default ModalComponent = ({isVisible, onClose, style, children}) => {
-  const width = Dimensions.get('screen').width;
+  const {width} = useWindowDimensions();
   return (
     <Modal
       hasBackdrop

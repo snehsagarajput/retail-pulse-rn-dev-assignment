@@ -2,8 +2,9 @@ import {USER_STORE} from '../actionType';
 import {getStoresDetail, getUserData} from '../helper/firestoreHelper';
 import {omit, orderBy, forOwn} from 'lodash';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {startUploading, captureError} from '../../utils/utils';
+import {startUploading, captureInfo, captureError} from '../../utils/utils';
 import {FILTER_KEYS, ALL_KEY, ASYNC_STORAGE_KEYS} from '../../utils/constants';
+import firestore from '@react-native-firebase/firestore';
 
 const loadUserData = () => async (dispatch, getState) => {
   try {
@@ -198,4 +199,43 @@ const updateCurrentFilter = (filter) => (dispatch, getState) => {
   });
 };
 
-export {loadUserData, updatePendingImages, updateCurrentFilter};
+const activateImagesListener = () => (dispatch) => {
+  const onError = (e) => {};
+
+  const onResult = (snapshot) => {
+    try {
+      const uploadedImages = {};
+      snapshot.docs.forEach((doc) => {
+        try {
+          uploadedImages[doc.id] = doc.data();
+        } catch (e) {
+          captureError(e);
+        }
+      });
+      dispatch({
+        type: USER_STORE.UPDATE_UPLOADED_IMAGES,
+        payload: {uploadedImages},
+      });
+    } catch (err) {
+      captureError(err);
+    }
+  };
+
+  const listerner = firestore()
+    .collection('store-visit')
+    .onSnapshot(onResult, onError);
+
+  dispatch({
+    type: USER_STORE.UPDATE_LISTENERS,
+    payload: {
+      listerners: [listerner],
+    },
+  });
+};
+
+export {
+  loadUserData,
+  updatePendingImages,
+  updateCurrentFilter,
+  activateImagesListener,
+};

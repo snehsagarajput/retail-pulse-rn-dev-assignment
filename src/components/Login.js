@@ -17,8 +17,8 @@ import {Icon} from 'react-native-eva-icons';
 import {useBoolean} from '../hooks/useBoolean';
 
 export default Login = () => {
-  const [username, setUsername] = useState('ram@gmail.com');
-  const [password, setPassword] = useState('retailpulse');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [viewPassword, setViewPassword] = useBoolean(false);
   const [loading, setLoading] = useState({state: false, text: ''});
 
