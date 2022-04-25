@@ -3,10 +3,10 @@ import thunkMiddleware from 'redux-thunk';
 import auth from './reducers/auth';
 import userStore from './reducers/userStore';
 
-export default function configureStore(isDebug = false) {
+export default function configureStore() {
   const rootReducer = combineReducers({auth, userStore});
   const extraComposer = [];
-  if (isDebug) {
+  if (__DEV__) {
     const Reactotron = require('../../dev/ReactotronConfig').default;
     extraComposer.push(Reactotron.createEnhancer());
   }

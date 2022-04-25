@@ -9,7 +9,7 @@ import StackNavigator from './src/screens/navigator';
 import {ToastProvider} from 'react-native-toast-notifications';
 import firestore from '@react-native-firebase/firestore';
 
-const store = configureStore(1);
+const store = configureStore();
 
 const App = () => {
   LogBox.ignoreLogs([

@@ -11,11 +11,12 @@
     "rm-node-modules": "rm -rf node_modules yarn.lock package-lock.json",
     "prettify-files": "npx prettier --write 'src/**/*.{js,json}'",
     "ios-pod": "cd ios && rm -rf Pods && rm -rf Podfile.lock && xcodebuild clean && arch -x86_64 pod install",
-    "cb-ios": "yarn install && yarn ios-pod && yarn ios --verbose",
+    "cb-ios": "yarn install && rm -rf ios/build && yarn ios-pod && yarn ios --verbose",
     "clean-android": "cd android && ./gradlew clean",
     "cb-a": "yarn install && yarn clean-android && yarn run android",
-    "pod-deep-remove": "rm -rf ~/Library/Caches/CocoaPods && rm -rf ios/Pods && rm -rf ~/Library/Developer/Xcode/DerivedData/* && cd ios && rm -rf Podfile.lock && pod deintegrate && pod setup && xcodebuild clean",
-    "b-ios": "yarn install && cd ios && pod install && cd .. && yarn ios"
+    "pod-deep-remove": "rm -rf ~/Library/Caches/CocoaPods && rm -rf ios/build && rm -rf ios/Pods && rm -rf ~/Library/Developer/Xcode/DerivedData/* && cd ios && rm -rf Podfile.lock && pod deintegrate && pod setup && xcodebuild clean",
+    "b-ios": "yarn install && cd ios && pod install && cd .. && yarn ios",
+    "release-my": "npx react-native run-ios --configuration Release"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.17.3",
