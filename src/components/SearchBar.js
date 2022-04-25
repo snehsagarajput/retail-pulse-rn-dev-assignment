@@ -21,6 +21,7 @@ export default SearchBar = ({
         onChangeText={handleSearchText}
         placeholder={'Search'}
         style={styles.input}
+        placeholderTextColor={COLORS.BLACK}
       />
       <TouchableOpacity onPress={handleSearchClose} style={styles.closeIcon}>
         <Icon

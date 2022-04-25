@@ -71,6 +71,7 @@ export default Login = () => {
           placeholder={'Email'}
           maxLength={254}
           returnKeyType={'next'}
+          placeholderTextColor={COLORS.BLACK}
         />
         <View style={[styles.input, {flexDirection: 'row'}]}>
           <TextInput
@@ -82,6 +83,7 @@ export default Login = () => {
             textContentType={'password'}
             placeholder={'Password'}
             returnKeyType={'done'}
+            placeholderTextColor={COLORS.BLACK}
           />
           <TouchableOpacity style={styles.eyeBtn} onPress={setViewPassword}>
             <Icon
