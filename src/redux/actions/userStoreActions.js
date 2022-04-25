@@ -2,7 +2,7 @@ import {USER_STORE} from '../actionType';
 import {getStoresDetail, getUserData} from '../helper/firestoreHelper';
 import {omit, orderBy, forOwn} from 'lodash';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {startUploading, captureInfo, captureError} from '../../utils/utils';
+import {startUploading, captureError} from '../../utils/utils';
 import {FILTER_KEYS, ALL_KEY, ASYNC_STORAGE_KEYS} from '../../utils/constants';
 import firestore from '@react-native-firebase/firestore';
 
@@ -200,7 +200,7 @@ const updateCurrentFilter = (filter) => (dispatch, getState) => {
 };
 
 const activateImagesListener = () => (dispatch) => {
-  const onError = (e) => {};
+  const onError = () => {};
 
   const onResult = (snapshot) => {
     try {

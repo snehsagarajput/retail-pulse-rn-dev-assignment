@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {View, StyleSheet} from 'react-native';
+import React, {useEffect, useState, useReducer} from 'react';
+import {View, StyleSheet, BackHandler} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import {
   loadUserData,
@@ -17,13 +17,13 @@ import SelectedStore from '../components/SelectedStore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {ASYNC_STORAGE_KEYS} from '../utils/constants';
 import {USER_STORE} from '../redux/actionType';
-import {captureError, uploadPendingImages} from '../utils/utils';
+import {isIOS, captureError, uploadPendingImages} from '../utils/utils';
 import {isEmpty, isEqual, debounce} from 'lodash';
 import Loader from '../components/Loader';
 
 export default HomeScreen = ({navigation, route}) => {
   const [loading, setLoading] = useState({state: false, text: ''});
-  const [searchActive, setSearchActive] = useState(false);
+  const [searchActive, setSearchActive] = useReducer((prev) => !prev, false);
   const [filterActive, setFilterActive] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [stores, setStores] = useState([]);
@@ -77,6 +77,22 @@ export default HomeScreen = ({navigation, route}) => {
       //if app opened
       getSetPendingImages();
     }
+    const handleBackPress = () => {
+      console.log('back pressed', searchActive);
+      if (searchActive) {
+        handleSearchClose();
+        return true;
+      }
+      return false;
+    };
+    if (!isIOS) {
+      BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+    }
+    return () => {
+      if (!isIOS) {
+        BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
+      }
+    };
   }, []);
 
   const delayedQuery = debounce((text) => {
@@ -114,14 +130,14 @@ export default HomeScreen = ({navigation, route}) => {
       handleFilterClose();
     }
     if (!searchActive) {
-      setSearchActive(true);
+      setSearchActive();
       setSearchText('');
       setStores([]);
     }
   };
 
   const handleSearchClose = () => {
-    setSearchActive(false);
+    setSearchActive();
     setSearchText('');
     setStores([]);
   };

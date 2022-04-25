@@ -80,7 +80,7 @@ export default Login = () => {
             disableFullscreenUI
             secureTextEntry={!viewPassword}
             value={password}
-            style={{flex: 1}}
+            style={styles.passwordInput}
             onChangeText={setPassword}
             textContentType={'password'}
             placeholder={'Password'}
@@ -155,5 +155,9 @@ const styles = StyleSheet.create({
   },
   eyeBtn: {
     marginLeft: 10,
+  },
+  passwordInput: {
+    flex: 1,
+    padding: 0,
   },
 });
