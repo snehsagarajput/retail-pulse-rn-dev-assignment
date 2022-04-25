@@ -5,7 +5,7 @@ import Modal from 'react-native-modal';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
 export default ModalComponent = ({isVisible, onClose, style, children}) => {
-  const {width} = useWindowDimensions();
+  const {width, height} = useWindowDimensions();
   return (
     <Modal
       hasBackdrop
@@ -13,6 +13,7 @@ export default ModalComponent = ({isVisible, onClose, style, children}) => {
       propagateSwipes
       isVisible={isVisible}
       deviceWidth={width}
+      deviceHeight={height}
       animationIn={'slideInUp'}
       style={[styles.modal]}
       onBackdropPress={onClose}

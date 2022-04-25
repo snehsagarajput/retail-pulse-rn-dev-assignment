@@ -9,7 +9,7 @@ export default SafeView = (props) => {
   return (
     <KeyboardAvoidingView
       keyboardVerticalOffset={headerHeight}
-      behavior={isIOS ? 'padding' : 'height'}
+      behavior={isIOS ? 'padding' : null}
       style={[styles.container, props.style]}>
       <SafeAreaView style={[styles.container, props.style]}>
         {props.children}
